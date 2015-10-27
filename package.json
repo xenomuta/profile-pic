@@ -1,38 +1,38 @@
 {
-    "name": "profile-pic",
-    "version": "0.1.0",
-    "description": "Create cover and profile pictures with face centered and uniform expected sizes.",
-    "main": "index.js",
-    "dependencies": {
-        "opencv": "^3.2.0",
-        "q": "^1.4.1"
-    },
-    "devDependencies": {
-        "jshint": "^2.8.0",
-        "mocha": "^2.3.3",
-        "should": "^7.1.1"
-    },
-    "scripts": {
-        "test": "node_modules/jshint/bin/jshint ./*.js ./test/*.js && NODE_ENV=test node_modules/mocha/bin/mocha -R spec test/**/*.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/xenomuta/profile-pic.git"
-    },
-    "keywords": [
-        "profile",
-        "avatar",
-        "profile",
-        "picture",
-        "picture",
-        "face",
-        "detection",
-        "cv"
-    ],
-    "author": "Rilke Petrosky Ulloa <xenomuta@gmail.com>",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/xenomuta/profile-pic/issues"
-    },
-    "homepage": "https://github.com/xenomuta/profile-pic#readme"
+  "name": "profile-pic",
+  "version": "1.0.0",
+  "description": "Create cover and profile pictures with face centered and uniform expected sizes.",
+  "main": "index.js",
+  "dependencies": {
+    "opencv": "^3.2.0",
+    "q": "^1.4.1"
+  },
+  "devDependencies": {
+    "jshint": "^2.8.0",
+    "mocha": "^2.3.3",
+    "should": "^7.1.1"
+  },
+  "scripts": {
+    "test": "node_modules/jshint/bin/jshint ./*.js ./test/*.js && NODE_ENV=test node_modules/mocha/bin/mocha -R spec test/**/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xenomuta/profile-pic.git"
+  },
+  "keywords": [
+    "profile",
+    "avatar",
+    "profile",
+    "picture",
+    "picture",
+    "face",
+    "detection",
+    "cv"
+  ],
+  "author": "Rilke Petrosky Ulloa <xenomuta@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xenomuta/profile-pic/issues"
+  },
+  "homepage": "https://github.com/xenomuta/profile-pic#readme"
 }

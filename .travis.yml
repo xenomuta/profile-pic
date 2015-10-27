@@ -1,4 +1,11 @@
 language: node_js
+
+before_install:
+  - sudo apt-get update
+
+install:
+  - sudo apt-get install libopencv-dev
+
 node_js:
   - "4.2"
   - "4.1"

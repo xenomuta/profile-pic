@@ -7,12 +7,12 @@ var pp = require('../'),
     fs = require('fs'),
     result,
     outputs = [{
-        width: 800,
-        height: 480,
+        width: 400,
+        height: 240,
         filename: '/tmp/cover-' + Date.now().toString() + '.jpg'
     }, {
-        width: 480,
-        height: 800,
+        width: 120,
+        height: 200,
         filename: '/tmp/stand-' + Date.now().toString() + '.jpg'
     }, {
         avatar: true,

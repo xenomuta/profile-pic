@@ -20,17 +20,17 @@ var profilePic = require('profile-pic');
 var images = [
     /* Landscape Ratio */
     {
-        width: 800,
-        height: 480,
+        width: 400,
+        height: 240,
         filename: '/tmp/landscape.jpg'
     },
     /* Portrait Ratio */
     {
-        width: 480,
-        height: 800,
+        width: 240,
+        height: 400,
         filename: '/tmp/standing.jpg'
     },
-    /* Square ratio avatar */
+    /* detected face avatar with square ratio */
     {
         avatar: true,
         width: 128,
@@ -41,9 +41,17 @@ var images = [
 
 profilePic('./test-image.jpeg', images)
     .then(function (result) {
-        // Results in an array for each input image, with detected faces when avatar == true
+		/*
+		[ { width: 400, height: 240, filename: '/tmp/landscape.jpg' },
+		  { width: 240, height: 400, filename: '/tmp/standing.jpg' },
+		  { avatar: true,
+		    width: 128,
+		    height: 128,
+		    filename: '/tmp/profile.jpg',
+		    faces: 5 } ]
+		*/
     })
-    .catch(function (error) {
+    .catch(function (err) {
         // Something bad happened ...
     });
 ```
@@ -57,19 +65,19 @@ This example will result in 3 images out of this input:
 **OUTPUT**:
 - Two centered and resized to expected size:
 
-<img src="https://raw.githubusercontent.com/xenomuta/profile-pic/master/test/images/landscape.jpg" alt="800x480">
+<img src="https://raw.githubusercontent.com/xenomuta/profile-pic/master/test/images/landscape.jpg" alt="400x240">
 
-(800x480)
+landscape.jpg (400x240)
 
-<img src="https://raw.githubusercontent.com/xenomuta/profile-pic/master/test/images/standing.jpg" alt="800x480">
+<img src="https://raw.githubusercontent.com/xenomuta/profile-pic/master/test/images/standing.jpg" alt="200x120">
 
-(400x240)
+standing.jpg (400x240)
 
 - And one avatar image with biggest detected face:
 
-<img src="https://raw.githubusercontent.com/xenomuta/profile-pic/master/test/images/profile.jpg" alt="800x480">
+<img src="https://raw.githubusercontent.com/xenomuta/profile-pic/master/test/images/profile.jpg" alt="128x128">
 
-(128x128)
+profile.jpg (128x128)
 
 
 

@@ -2,6 +2,7 @@
 
 var Q = require('q'),
     cv = require('opencv'),
+    fs = require('fs'),
     Debug = require('debug'),
     debug = new Debug('profile-pic');
 
@@ -11,6 +12,9 @@ module.exports = function (inFile, outputs) {
     }
 
     return Q.promise(function (finalResolve, finalReject) {
+        if (!fs.existsSync(inFile)) {
+            return finalReject('Input image file not found');
+        }
         cv.readImage(inFile, function (err, image) {
             if (err) {
                 return finalReject(err);

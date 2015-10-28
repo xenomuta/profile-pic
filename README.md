@@ -15,27 +15,59 @@ npm install profile-pic
 
 ## Usage
 
-```javscript
-var pp = require('profile-pic');
+```javascript
+var profilePic = require('profile-pic');
+var images = [
+    /* Landscape Ratio */
+    {
+        width: 800,
+        height: 480,
+        filename: '/tmp/landscape.jpg'
+    },
+    /* Portrait Ratio */
+    {
+        width: 480,
+        height: 800,
+        filename: '/tmp/standing.jpg'
+    },
+    /* Square ratio avatar */
+    {
+        avatar: true,
+        width: 128,
+        height: 128,
+        filename: '/tmp/profile.jpg'
+    }
+];
 
-pp('./input-image.jpg', {
-	cover: {
-		width: 800,
-		height: 240,
-		filename: '/tmp/cover.jpg'
-	},
-	profile: {
-		size: 128,
-		filename: '/tmp/profile.jpg'
-	}
-}).then(function () {
-	// ... all good ...
-}).catch(function (err) {
-	// ... an error has ocurred ...
-	console.error(err);
-});
-
+profilePic('./test-image.jpeg', images)
+    .then(function (result) {
+        // Results in an array for each input image, with detected faces when avatar == true
+    })
+    .catch(function (error) {
+        // Something bad happened ...
+    });
 ```
+
+This example will result in 3 images out of this input:
+
+**INPUT**:
+
+<img src="https://raw.githubusercontent.com/xenomuta/profile-pic/master/bin/input.jpg" alt="input">
+
+**OUTPUT**:
+- Two centered and resized to expected size:
+
+(800x480)
+<img src="https://raw.githubusercontent.com/xenomuta/profile-pic/master/bin/landscape.jpg" alt="800x480">
+
+(400x240)
+<img src="https://raw.githubusercontent.com/xenomuta/profile-pic/master/bin/standing.jpg" alt="800x480">
+
+- And one avatar image with biggest detected face:
+
+(128x128)
+<img src="https://raw.githubusercontent.com/xenomuta/profile-pic/master/bin/profile.jpg" alt="800x480">
+
 
 
 

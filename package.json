@@ -8,6 +8,7 @@
     "q": "^1.4.1"
   },
   "devDependencies": {
+    "debug": "^2.2.0",
     "jshint": "^2.8.0",
     "mocha": "^2.3.3",
     "should": "^7.1.1"
@@ -30,6 +31,12 @@
     "cv"
   ],
   "author": "Rilke Petrosky Ulloa <xenomuta@gmail.com>",
+  "contributors": [
+    {
+      "name": "Stalin Bonilla",
+      "email": "starlin66@gmail.com"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/xenomuta/profile-pic/issues"

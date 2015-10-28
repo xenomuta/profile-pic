@@ -6,60 +6,62 @@ var pp = require('../'),
     Q = require('q'),
     fs = require('fs'),
     result,
-    config = {
-        cover: {
-            width: 800,
-            height: 480,
-            filename: '/tmp/cover-' + Date.now().toString() + '.jpg'
-        },
-        profile: {
-            size: 128,
-            filename: '/tmp/profile-' + Date.now().toString() + '.jpg'
-        }
-    };
+    outputs = [{
+        width: 800,
+        height: 480,
+        filename: '/tmp/cover-' + Date.now().toString() + '.jpg'
+    }, {
+        width: 480,
+        height: 800,
+        filename: '/tmp/stand-' + Date.now().toString() + '.jpg'
+    }, {
+        avatar: true,
+        width: 128,
+        height: 128,
+        filename: '/tmp/profile-' + Date.now().toString() + '.jpg'
+    }];
 
 describe('Profile Picture', function () {
     after(function (done) {
-        fs.unlinkSync(config.cover.filename);
-        fs.unlinkSync(config.profile.filename);
+        outputs.forEach(function (output) {
+            fs.unlinkSync(output.filename);
+        });
         done();
     });
 
-    it('should create two images', function (done) {
-        pp(__dirname + '/people.jpg', config).then(function (r) {
+    it('should create output images', function (done) {
+        pp(__dirname + '/images/input.jpg', outputs).then(function (r) {
             result = r;
-            var fs = require('fs');
-            should(fs.existsSync(config.cover.filename)).equal(true);
-            should(fs.existsSync(config.profile.filename)).equal(true);
+            should.exist(result);
+            result.length.should.equal(outputs.length);
+            result.forEach(function (output) {
+                should(fs.existsSync(output.filename)).equal(true);
+            });
             done();
         }).catch(done);
     });
-    it('should have detected 5 faces for sample image', function (done) {
-        should.exist(result.profile.faces);
-        result.profile.faces.should.equal(5);
+    it('should have detected 5 faces for testing avatar image', function (done) {
+        should.exist(result[2].faces);
+        result[2].faces.should.equal(5);
         done();
     });
-    it('images should be of spected size', function (done) {
-        Q.all([config.cover.filename, config.profile.filename].map(function (filename) {
+    it('images should be of spected sizes', function (done) {
+        Q.all(result.map(function (r) {
             return Q.promise(function (resolve, reject) {
-                cv.readImage(filename, function (err, im) {
+                cv.readImage(r.filename, function (err, im) {
                     if (err) {
                         return reject(err);
                     }
                     resolve(im.size());
                 });
             });
-        })).then(function (result) {
-            var cover = result[0];
-            var profile = result[1];
-            should.exist(cover);
-            should.exist(profile);
-            cover.length.should.equal(2);
-            profile.length.should.equal(2);
-            should(cover[1]).equal(config.cover.width);
-            should(cover[0]).equal(config.cover.height);
-            should(profile[1]).equal(config.profile.size);
-            should(profile[0]).equal(config.profile.size);
+        })).then(function (sizes) {
+            should.exist(sizes);
+            sizes.length.should.equal(outputs.length);
+            outputs.forEach(function (output, i) {
+                should(sizes[i][1]).equal(output.width);
+                should(sizes[i][0]).equal(output.height);
+            });
             done();
         }).catch(done);
     });

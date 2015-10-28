@@ -2,117 +2,126 @@
 
 var Q = require('q'),
     cv = require('opencv'),
-    defaultConfig = {
-        cover: {
-            width: 800,
-            height: 480
-        },
-        profile: {
-            size: 128,
-        }
-    };
+    Debug = require('debug'),
+    debug = new Debug('profile-pic');
 
-module.exports = function (inFile, config) {
-    if (config) {
-        Object.keys(defaultConfig).forEach(function (key) {
-            config[key] = config[key] || defaultConfig[key];
-        });
-    } else {
-        config = defaultConfig;
+module.exports = function (inFile, outputs) {
+    if (!outputs || !Object.keys(outputs)) {
+        throw new Error('No configuration specified');
     }
 
-    if (!config.cover.filename) {
-        config.cover.filename = inFile.replace(/^(.*)(\.\w+)$/, '$1-out$2');
-    }
-    if (!config.profile.filename) {
-        config.profile.filename = config.cover.filename.replace(/^(.*)(\.\w+)$/, '$1-profile$2');
-    }
-
-    var width = config.cover.width;
-    var height = config.cover.height;
-
-    return Q.promise(function (resolve, reject) {
-        cv.readImage(inFile, function (err, im) {
+    return Q.promise(function (finalResolve, finalReject) {
+        cv.readImage(inFile, function (err, image) {
             if (err) {
-                return reject(err);
+                return finalReject(err);
             }
-            var w = im.size()[1],
-                h = im.size()[0];
-
-            if (w < 10 || h < 10) {
-                return reject(new Error('Invalid input image'));
-            }
-            if (w <= h) {
-                h = Math.round((h * width) / w);
-                w = width;
-            } else {
-                w = Math.round((w * height) / h);
-                h = height;
-            }
-            im.resize(w, h);
-
-            if (h > height) {
-                im = im.crop(0, (h / 2) - (height / 2), width, height);
-            }
-            if (w > width) {
-                im = im.crop((w / 2) - (width / 2), 0, width, height);
-            }
-
-            im.resize(width, height);
-            im.save(config.cover.filename);
-
-            var bim = im.copy();
-            bim.convertGrayscale();
-            bim.detectObject(cv.FACE_CASCADE, {
-                neighbors: 5
-            }, function (err, faces) {
-                try {
-                    if (err || !faces || !faces.length) {
-                        throw new Error('No faces detected');
+            debug('* Loaded image: %j', image.size());
+            var promises = outputs.map(function (output, idx) {
+                return Q.promise(function (resolve, reject) {
+                    debug('* Generating image: %j', [output.height, output.width]);
+                    if (!output.filename) {
+                        output.filename = inFile.replace(/^(.*)(\.\w+)$/, '$1-out-' + (idx + 1).toString() + '$2');
                     }
-                    config.profile.faces = faces.length;
-                    var finalFace, faceSize = 0;
-                    for (var i = 0; i < faces.length; i += 1) {
-                        var face = faces[i];
-                        if (face.width * face.height >= faceSize) {
-                            faceSize = face.width * face.height;
-                            finalFace = face;
-                        }
+                    var im = image.copy();
+
+                    var width = output.width;
+                    var height = output.height;
+
+                    if (output.avatar) {
+                        debug('* Detecting faces');
+                        var bim = im.copy();
+                        bim.convertGrayscale();
+                        return bim.detectObject(cv.FACE_CASCADE, {
+                            neighbors: 5
+                        }, function (err, faces) {
+                            debug(err);
+                            try {
+                                if (err || !faces || !faces.length) {
+                                    throw new Error('No faces detected');
+                                }
+                                debug('* Faces detected: %d', faces.length);
+                                output.faces = faces.length;
+                                var finalFace, faceSize = 0;
+                                for (var i = 0; i < faces.length; i += 1) {
+                                    var face = faces[i];
+                                    if (face.width * face.height >= faceSize) {
+                                        faceSize = face.width * face.height;
+                                        finalFace = face;
+                                    }
+                                }
+
+                                var x = finalFace.x - (finalFace.width * 0.5),
+                                    y = finalFace.y - (finalFace.height * 0.5),
+                                    w = finalFace.width * 2,
+                                    h = finalFace.height * 2,
+                                    width = bim.size()[1],
+                                    height = bim.size()[0];
+
+                                if (w > width) {
+                                    w = width;
+                                } else if (w + x > width) {
+                                    x -= (width - w);
+                                    w = width;
+                                }
+                                if (h > height) {
+                                    h = height;
+                                } else if (h + y > height) {
+                                    y -= (height - h);
+                                    h = height;
+                                }
+                                if (x < 0) {
+                                    x = 0;
+                                }
+                                if (y < 0) {
+                                    y = 0;
+                                }
+
+                                im = im.crop(x, y, w, h);
+                            } catch (e) {
+                                output.faces = 0;
+                            }
+                            output.im = im;
+                            return resolve(output);
+                        });
                     }
 
-                    var x = finalFace.x - (finalFace.width * 0.5),
-                        y = finalFace.y - (finalFace.height * 0.5),
-                        w = finalFace.width * 2,
-                        h = finalFace.height * 2;
+                    var w = im.size()[1],
+                        h = im.size()[0];
 
-                    if (w > width) {
+                    if (w < 10 || h < 10) {
+                        return reject(new Error('Invalid input image'));
+                    }
+                    if (w <= h) {
+                        h = Math.round((h * width) / w);
                         w = width;
-                    } else if (w + x > width) {
-                        x -= (width - w);
-                        w = width;
+                    } else {
+                        w = Math.round((w * height) / h);
+                        h = height;
                     }
+                    im.resize(w, h);
+
                     if (h > height) {
-                        h = height;
-                    } else if (h + y > height) {
-                        y -= (height - h);
-                        h = height;
+                        im = im.crop(0, (h / 2) - (height / 2), width, height);
                     }
-                    if (x < 0) {
-                        x = 0;
+                    if (w > width) {
+                        im = im.crop((w / 2) - (width / 2), 0, width, height);
                     }
-                    if (y < 0) {
-                        y = 0;
-                    }
+                    output.im = im;
+                    resolve(output);
+                });
+            });
 
-                    im = im.crop(x, y, w, h);
-                    im.resize(config.profile.size, config.profile.size);
-                    im.save(config.profile.filename);
-                    return resolve(config);
+            Q.all(promises).then(function (outputs) {
+                try {
+                    outputs = outputs.map(function (output) {
+                        output.im.resize(output.width, output.height);
+                        output.im.save(output.filename);
+                        delete output.im;
+                        return output;
+                    });
+                    finalResolve(outputs);
                 } catch (e) {
-                    config.profile.faces = 0;
-                    im.resize(config.profile.size, config.profile.size);
-                    im.save(config.profile.filename);
-                    return resolve(config);
+                    finalReject(e);
                 }
             });
         });

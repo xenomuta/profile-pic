@@ -57,17 +57,19 @@ This example will result in 3 images out of this input:
 **OUTPUT**:
 - Two centered and resized to expected size:
 
-(800x480)
 <img src="https://raw.githubusercontent.com/xenomuta/profile-pic/master/test/images/landscape.jpg" alt="800x480">
 
-(400x240)
+(800x480)
+
 <img src="https://raw.githubusercontent.com/xenomuta/profile-pic/master/test/images/standing.jpg" alt="800x480">
+
+(400x240)
 
 - And one avatar image with biggest detected face:
 
-(128x128)
 <img src="https://raw.githubusercontent.com/xenomuta/profile-pic/master/test/images/profile.jpg" alt="800x480">
 
+(128x128)
 
 
 

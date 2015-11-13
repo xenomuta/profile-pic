@@ -6,7 +6,7 @@ var Q = require('q'),
     Debug = require('debug'),
     debug = new Debug('profile-pic');
 
-module.exports = function (inFile, outputs) {
+module.exports = function ProfilePic(inFile, outputs) {
     if (!outputs || !Object.keys(outputs)) {
         throw new Error('No configuration specified');
     }

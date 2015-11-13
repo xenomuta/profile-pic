@@ -4,7 +4,7 @@
   "description": "Create cover and profile pictures with face centered and uniform expected sizes.",
   "main": "index.js",
   "dependencies": {
-    "opencv": "^3.2.0",
+    "opencv": "peterbraden/node-opencv",
     "q": "^1.4.1"
   },
   "devDependencies": {

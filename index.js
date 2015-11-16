@@ -54,34 +54,33 @@ module.exports = function ProfilePic(inFile, outputs) {
                                     }
                                 }
 
-                                var x = finalFace.x - (finalFace.width * 0.5),
-                                    y = finalFace.y - (finalFace.height * 0.5),
-                                    w = finalFace.width * 2,
-                                    h = finalFace.height * 2,
-                                    width = bim.size()[1],
-                                    height = bim.size()[0];
+                                var width = bim.size()[1],
+                                    height = bim.size()[0],
+                                    padding = 2;
 
-                                if (w > width) {
-                                    w = width;
-                                } else if (w + x > width) {
-                                    x -= (width - w);
-                                    w = width;
-                                }
-                                if (h > height) {
-                                    h = height;
-                                } else if (h + y > height) {
-                                    y -= (height - h);
-                                    h = height;
-                                }
+                                var x = finalFace.x - (finalFace.width / padding),
+                                    y = finalFace.y - (finalFace.height / padding),
+                                    w = finalFace.width * padding,
+                                    h = finalFace.height * padding;
+
                                 if (x < 0) {
                                     x = 0;
                                 }
                                 if (y < 0) {
                                     y = 0;
                                 }
-
+                                if (x + w > width) {
+                                    w -= (x + w) - width;
+                                }
+                                if (y + h > height) {
+                                    h -= (y + h) - height;
+                                }
+                                if (x < 0 || y < 0 || x + w > width || y + h > height) {
+                                    throw new Error('Face ROI out of image bounds');
+                                }
                                 im = im.crop(x, y, w, h);
                             } catch (e) {
+                                console.error(e);
                                 output.faces = 0;
                             }
                             output.im = im;

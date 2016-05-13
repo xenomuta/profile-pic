@@ -5,7 +5,7 @@
 
 Create cover and profile pictures with face centered and uniform expected sizes.
 
-It gets an input image and outputs two images: a cover image centered with specified size, and a profile picture with square ratio centered in bigest detected human face.
+It gets an input image and outputs three images: a cover image centered with specified size in landscape and portrait, and a profile picture with square ratio centered in bigest detected human face.
 
 ## Install
 
